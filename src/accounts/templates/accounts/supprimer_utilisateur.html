@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Supprimer utilisateur</title></head>
+<body>
+    <h2>Confirmer la suppression de {{ utilisateur.user.username }} ?</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Oui, supprimer</button>
+    </form>
+    <a href="{% url 'profil' %}">Annuler</a>
+</body>
+</html>

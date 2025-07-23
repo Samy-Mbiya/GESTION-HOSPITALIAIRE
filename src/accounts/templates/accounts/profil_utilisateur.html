@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+    <h2>Bienvenue {{ request.user.username }} | Role: {{request.user.utilisateur.role}}</h2>
+    <h1>JE SUIS USER</h1>
+     <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit"><a href="{% url 'logout' %}">Se déconnecter</a></button>
+    </form>
+</body>
+</html>

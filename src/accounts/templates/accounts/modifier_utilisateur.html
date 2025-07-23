@@ -1,0 +1,17 @@
+{% extends 'base_log.html' %}
+{% load form_tags %}
+{% block title %}
+  <title>Modifier User</title>
+{% endblock %}
+{% block content %}
+  <div class="register-container">
+    <h3 class="text-center mb-4">Modifier User</h3>
+      <h2>Modifier le rôle de : {{ utilisateur.user.username }}</h2>
+        <form method="POST" method="POST" id="registerForm">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Enregistrer</button>
+        </form>
+        <a href="{% url 'profil' %}">Retour</a>
+  </div>
+  {% endblock %}

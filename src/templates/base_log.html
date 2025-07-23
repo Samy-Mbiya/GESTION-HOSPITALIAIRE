@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+        {% block title %}{% endblock %}
+
+        <!-- Bootstrap CSS local -->
+        <link rel="stylesheet" href="{% static 'accounts/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+    </head>
+    <body>
+            {% block content %}
+
+            {% endblock %}
+
+         <!-- Bootstrap JS local -->
+        <script src="{% static 'accounts/js/bootstrap.bundle.min.js' %}"></script>
+    </body>
+</html>
