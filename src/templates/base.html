@@ -33,7 +33,7 @@
                 <hr class="sidebar-divider my-0">
 
                 <!-- Nav Item - Gestion User si le user est admin-->
-                 {% if user.is_authenticated and user.utilisateur.role == 'Admin' %}
+                 {% if user.is_authenticated and user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'profil'%}">
                             <i class="fas fa-fw fa-tachometer-alt"></i>
@@ -117,10 +117,9 @@
                                     <div class="dropdown-divider"></div>
                                         <form method="POST" action="{% url 'logout' %}">
                                             {% csrf_token %}
-                                            <a href="{% url 'logout' %} " class="dropdown-item" data-toggle="modal" data-target="#logoutModal">
-                                                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                                <button type="submit">déconnecter</button>
-                                            </a>
+                                             <button type="submit" class="dropdown-item">
+                                                 Deconnexion
+                                            </button>
                                         </form>
                                 </div>
                             </li>

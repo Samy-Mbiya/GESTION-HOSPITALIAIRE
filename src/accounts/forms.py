@@ -9,7 +9,12 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ['username', 'password1', 'password2']
 
-class RoleUpdateForm(forms.ModelForm):
+class RoleUpdateForm(forms.ModelForm):#Modification du role
     class Meta:
         model = Utilisateur
         fields = ['role']
+
+class UserUpdateForm(forms.ModelForm): #Modification de User
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']

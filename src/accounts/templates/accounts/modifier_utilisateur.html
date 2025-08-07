@@ -15,10 +15,11 @@
             <!-- Card Body -->
             <div class="card-body">
                 <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                     <form method="POST" method="POST" id="registerForm">
+                     <form method="POST" id="registerForm">
                         {% csrf_token %}
+                         {{ user_form.as_p }}
                         {{ form.as_p }}
-                        <button type="submit">Enregistrer</button>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
                     </form>
                     <a href="{% url 'profil' %}">Retour</a>
                 </div>

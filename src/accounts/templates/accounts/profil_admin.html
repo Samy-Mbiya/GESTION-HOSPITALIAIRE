@@ -32,6 +32,7 @@
                             <tr>
                                 <th>Utilisateur</th>
                                 <th>Role</th>
+                                <th>Log</th>
                                 <th>Modifier</th>
                                 <th>Supprimer</th>
                             </tr>
@@ -40,6 +41,7 @@
                             <tr>
                                 <th>Utilisateur</th>
                                 <th>Role</th>
+                                <th>Log</th>
                                 <th>Modifier</th>
                                 <th>Supprimer</th>
                             </tr>
@@ -49,6 +51,7 @@
                                 <tr>
                                     <td>{{ utilisateur.user.username }}</td>
                                     <td>{{ utilisateur.role }}</td>
+                                    <td>{{ utilisateur.user.last_login }}</td>
                                      <td>
 
                                       <a href="{% url 'modifier_utilisateur' utilisateur.id %}" class="btn btn-info btn-icon-split"><span class="text">Modifier</span></a>

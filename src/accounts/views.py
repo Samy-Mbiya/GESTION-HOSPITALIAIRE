@@ -1,6 +1,7 @@
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import RegisterForm, RoleUpdateForm
+from django.contrib.auth.models import User
+from .forms import RegisterForm, RoleUpdateForm, UserUpdateForm
 from .models import Utilisateur
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -20,26 +21,31 @@ def register(request):
 # Modifier rôle utilisateur
 @login_required
 def modifier_utilisateur(request, user_id):
-    if not request.user.utilisateur.role == 'Admin':
+    #print("→ Vue appelée avec user_id =", user_id)
+    if not request.user.is_superuser:
         return redirect('profil')
-
+    user = get_object_or_404(User, id=user_id)
     utilisateur = get_object_or_404(Utilisateur, id=user_id)
+    #utilisateur = get_object_or_404(Utilisateur, user=user)
 
     if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=user)
         form = RoleUpdateForm(request.POST, instance=utilisateur)
-        if form.is_valid():
+        if form.is_valid() and user_form.is_valid() :
+            user_form.save()
             form.save()
-            messages.success(request, "Rôle mis à jour avec succès.")
+            messages.success(request, "Informations mises à jour avec succès.")
             return redirect('profil')
     else:
+        user_form = UserUpdateForm(instance=user)
         form = RoleUpdateForm(instance=utilisateur)
 
-    return render(request, 'accounts/modifier_utilisateur.html', {'form': form, 'utilisateur': utilisateur})
+    return render(request, 'accounts/modifier_utilisateur.html', {'form': form, 'user_form': user_form, 'utilisateur': utilisateur})
 
 # Supprimer un utilisateur
 @login_required
 def supprimer_utilisateur(request, user_id):
-    if not request.user.utilisateur.role == 'Admin':
+    if not request.user.is_superuser: #si ce n'est pas un super utilisateur
         return redirect('profil')
 
     utilisateur = get_object_or_404(Utilisateur, id=user_id)
@@ -56,9 +62,9 @@ def supprimer_utilisateur(request, user_id):
 def profil(request):
     utilisateur = Utilisateur.objects.get(user=request.user)
 
-    if utilisateur.role == 'Admin':
+    if request.user.is_superuser: #si c'est un super utilisateur
         # Liste de tous les utilisateurs
-        utilisateurs = Utilisateur.objects.select_related('user').all()
+        utilisateurs = Utilisateur.objects.select_related('user').exclude(user__is_superuser=True)
         return render(request, 'accounts/profil_admin.html', {'utilisateurs': utilisateurs})
 
     elif utilisateur.role == 'manager':
