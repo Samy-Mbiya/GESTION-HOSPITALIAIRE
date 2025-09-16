@@ -21,4 +21,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),  # liens vers votre app accounts
+    path('client/', include('facture.urls')),  # liens vers votre app facture
 ]

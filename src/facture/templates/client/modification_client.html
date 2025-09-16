@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load form_tags %}
+{% block title %}
+  <title>Update</title>
+{% endblock %}
+{% block content %}
 
-</body>
-</html>
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-7">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Modification du Client</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <form method="POST" id="registerForm">
+                      {% csrf_token %}
+                      {% for field in form %}
+                        <div class="mb-3">
+                          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                          {{ field|add_class:"form-control" }}
+
+                          {% if field.errors %}
+                            <div class="text-danger small">
+                              {% for error in field.errors %}
+                                {{ error }}
+                              {% endfor %}
+                            </div>
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+
+                      {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                      {% endif %}
+                      <button type="submit" class="btn btn-primary w-100">Modification</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

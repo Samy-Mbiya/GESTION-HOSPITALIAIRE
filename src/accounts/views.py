@@ -5,6 +5,8 @@ from .forms import RegisterForm, RoleUpdateForm, UserUpdateForm
 from .models import Utilisateur
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from facture.models import Client
+
 
 #Enregistrement de l'utilisateur
 def register(request):
@@ -26,7 +28,6 @@ def modifier_utilisateur(request, user_id):
         return redirect('profil')
     user = get_object_or_404(User, id=user_id)
     utilisateur = get_object_or_404(Utilisateur, id=user_id)
-    #utilisateur = get_object_or_404(Utilisateur, user=user)
 
     if request.method == 'POST':
         user_form = UserUpdateForm(request.POST, instance=user)
@@ -62,17 +63,20 @@ def supprimer_utilisateur(request, user_id):
 def profil(request):
     utilisateur = Utilisateur.objects.get(user=request.user)
 
-    if request.user.is_superuser: #si c'est un super utilisateur
-        # Liste de tous les utilisateurs
+    if request.user.is_superuser:
+        # Vue admin : liste des utilisateurs
         utilisateurs = Utilisateur.objects.select_related('user').exclude(user__is_superuser=True)
         return render(request, 'accounts/profil_admin.html', {'utilisateurs': utilisateurs})
 
     elif utilisateur.role == 'manager':
-        return render(request, 'accounts/profil_manager.html')
+        # Vue manager : liste des clients
+        clients = Client.objects.all('user')
+        return render(request, 'client/liste_client.html', {'clients': clients})
 
     else:
-        return render(request, 'accounts/profil_utilisateur.html')
-
+        # Vue utilisateur normal : ses propres clients
+        clients = Client.objects.all()
+        return render(request, 'client/liste_client.html', {'clients': clients})
 #Deconnection
 def logout_view(request):
     logout(request)
