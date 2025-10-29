@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 {% load form_tags %}
 {% block title %}
-  <title>ListeClient</title>
+  <title>Detail_fac</title>
 {% endblock %}
 {% block content %}
-
-    <!-- DataTales Example -->
+     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Liste des clients</h6>
+            <h6 class="m-0 font-weight-bold text-primary">{{ client.nom }}</h6>
         </div>
             <div class="card-body">
                      <div class="row">
@@ -36,37 +35,29 @@
                          </div>
                      </div>
                 <div class="table-responsive">
-                    {% if clients %}
+                    {% if descriptions %}
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Client</th>
-                                <th>Honoraire</th>
-                                <th>Facture</th>
-                                <th>Modification</th>
-                                  {% if user.is_authenticated and user.is_superuser %}
-                                    <th>Suppression</th>
-                                  {% endif %}
+                                <th>Detail</th>
+                                <th>Quantité</th>
+                                <th>Prix</th>
+                                <th>Total</th>
+                                <th>Modifier</th>
+                                <th>Suppression</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                               <th>Client</th>
-                                <th>Honoraire</th>
-                                <th>Facture</th>
-                                <th>Modification</th>
-                                {% if user.is_authenticated and user.is_superuser %}
-                                    <th>Suppression</th>
-                                  {% endif %}
-                            </tr>
-                        </tfoot>
                         <tbody>
-                              {% for client in clients %}
+                              {% for desc in descriptions %}
                                 <tr>
-                                    <td>{{ client.nom }}</td>
-                                    <td><a href="{% url 'list_Hon' client.id %}" class="btn btn-info btn-icon-split"><span class="text">Honoraire</span></a></td>
-                                    <td><a href="{% url 'list_Fac' client.id %}" class="btn btn-primary btn-icon-split"><span class="text">Facture</span></a></td>
+                                    <td>{{ desc.detail }}</td>
+                                    <td>{{ desc.qt }}</td>
+                                    <td>{{ desc.prix }}</td>
+                                    <td>{{ desc.total }}</td>
                                      <td>
+                                      <a href="{% url 'editclient' client.id %}" class="btn btn-warning btn-icon-split"><span class="text">Detail</span></a>
+                                    </td>
+                                    <td>
                                       <a href="{% url 'editclient' client.id %}" class="btn btn-info btn-icon-split"><span class="text">Modifier</span></a>
                                     </td>
                                     {% if user.is_authenticated and user.is_superuser %}

@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 {% load form_tags %}
 {% block title %}
-  <title>ListeClient</title>
+  <title>Detail_hn</title>
 {% endblock %}
 {% block content %}
-
-    <!-- DataTales Example -->
+     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Liste des clients</h6>
+            <h6 class="m-0 font-weight-bold text-primary">{{ client.nom }}</h6>
         </div>
             <div class="card-body">
                      <div class="row">
@@ -36,44 +35,37 @@
                          </div>
                      </div>
                 <div class="table-responsive">
-                    {% if clients %}
+                    {% if nhs %}
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
-                                <th>Client</th>
-                                <th>Honoraire</th>
-                                <th>Facture</th>
-                                <th>Modification</th>
-                                  {% if user.is_authenticated and user.is_superuser %}
-                                    <th>Suppression</th>
-                                  {% endif %}
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Acompte</th>
+                                <th>Reste</th>
+                                <th>Remise</th>
+                                <th>Detail</th>
+                                <th>Modifier</th>
+                                <th>Suppression</th>
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                               <th>Client</th>
-                                <th>Honoraire</th>
-                                <th>Facture</th>
-                                <th>Modification</th>
-                                {% if user.is_authenticated and user.is_superuser %}
-                                    <th>Suppression</th>
-                                  {% endif %}
-                            </tr>
-                        </tfoot>
                         <tbody>
-                              {% for client in clients %}
+                              {% for nh in nhs %}
                                 <tr>
-                                    <td>{{ client.nom }}</td>
-                                    <td><a href="{% url 'list_Hon' client.id %}" class="btn btn-info btn-icon-split"><span class="text">Honoraire</span></a></td>
-                                    <td><a href="{% url 'list_Fac' client.id %}" class="btn btn-primary btn-icon-split"><span class="text">Facture</span></a></td>
+                                    <td>{{ nh.date }}</td>
+                                    <td>{{ nh.total_payer }}</td>
+                                    <td>{{ nh.acompte }}</td>
+                                    <td>{{ nh.reste }}</td>
+                                    <td>{{ nh.remise }}</td>
                                      <td>
+                                      <a href="{% url 'editclient' client.id %}" class="btn btn-warning btn-icon-split"><span class="text">Detail</span></a>
+                                    </td>
+                                    <td>
                                       <a href="{% url 'editclient' client.id %}" class="btn btn-info btn-icon-split"><span class="text">Modifier</span></a>
                                     </td>
-                                    {% if user.is_authenticated and user.is_superuser %}
-                                        <td>
-                                            <a href="{% url 'suppclient' client.id %}" class="btn btn-danger btn-icon-split"><span class="text">Supprimer</span></a>
-                                         </td>
-                                    {% endif %}
+                                    <td>
+                                        <a href="{% url 'suppclient' client.id %}" class="btn btn-danger btn-icon-split"><span class="text">Supprimer</span></a>
+                                     </td>
 
                                 </tr>
                               {% endfor %}
