@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load form_tags %}
 {% block title %}
-  <title>Liste_Fac</title>
+  <title>Fac_Description</title>
 {% endblock %}
 {% block content %}
      <!-- DataTales Example -->
@@ -53,18 +53,30 @@
                                                     <td>{{ description.detail }}</td>
                                                     <td>{{ description.qt }}</td>
                                                     <td>{{ description.prix }}</td>
-                                                    <td class="row-total">0</td>
+                                                    <td>{{ description.total }}</td>
                                                     <td><button type="button" class="btn btn-info  btn-sm remove-row">✏️</button></td>
                                                     <td><button type="button" class="btn btn-danger btn-sm remove-row">❌</button></td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>
+                                            <tfoot>
+                                              <tr>
+                                                <th colspan="3" class="text-end">Total général</th>
+                                                <th>{{ total_general }}</th>
+                                                <th colspan="2"></th>
+                                              </tr>
+                                            </tfoot>
                                         </table>
+                                        <div id="total-display" class="mt-4 alert alert-info" >
+                                            <strong>Total a Payé :</strong> <span>{{ facture.total_payer }}</span> $
+                                            {% if facture.acompte > 0  %}
+                                                |
+                                                <strong>Acompte :</strong> <span >{{ facture.acompte }}</span> $ |
+                                                <strong>Reste :</strong> <span>{{ facture.reste }}</span> $ |
+                                                <strong>Remise :</strong> <span >{{ facture.remise }}</span> $
+                                            {% endif %}
+                                        </div>
                                     </fieldset>
-                                <div id="total-display" class="mt-4 alert alert-info" style="display: none;">
-                                    <strong>Total :</strong> <span id="total-value">0</span> FC |
-                                    <strong>Reste :</strong> <span id="reste-value">0</span> FC
-                                </div>
                             </div>
 
                      </div>

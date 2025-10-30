@@ -59,18 +59,18 @@ class Description(models.Model):
     facture = models.ForeignKey(Facture, on_delete=models.CASCADE, null=True, blank=True)
     nh = models.ForeignKey(Nh, on_delete=models.CASCADE, null=True, blank=True)
 
-    def clean(self):
-        """⚖️ Empêche qu’une description soit liée à deux documents à la fois"""
+    """def clean(self):
+        #⚖️ Empêche qu’une description soit liée à deux documents à la fois
         if not self.facture and not self.nh:
             raise ValidationError("La description doit être liée à une facture ou un NH.")
         if self.facture and self.nh:
             raise ValidationError("Une description ne peut pas être liée à une facture ET un NH.")
-
+"""
     def save(self, *args, **kwargs):
-        self.full_clean()
+        # Calcule le total avant la validation
         self.total = self.qt * self.prix
 
-        # ✅ Si aucun document n'est lié, on attache automatiquement le dernier
+        # ⚠️ Ne pas appeler full_clean() avant d'avoir attaché facture ou nh
         if not self.facture and not self.nh:
             last_facture = Facture.objects.last()
             last_nh = Nh.objects.last()
@@ -79,14 +79,15 @@ class Description(models.Model):
             elif last_nh:
                 self.nh = last_nh
 
+        # Maintenant que facture/nh est défini, on peut valider
+        self.full_clean()
         super().save(*args, **kwargs)
 
-        # 🔄 Met à jour les totaux du document lié
+        # Mise à jour du total global
         if self.facture:
             self.facture.update_totals()
         elif self.nh:
             self.nh.update_totals()
-
     def __str__(self):
         return f"{self.detail} - Total: {self.total}"
 

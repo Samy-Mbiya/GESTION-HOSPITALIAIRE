@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm
@@ -76,7 +77,6 @@ def supprimerClient(request, client_id):
 
 # ========================FACTURE=================================================
 
-
 # Liste et Enregistrement de Facture Client
 def listFac(request, client_id):
     client = get_object_or_404(Client, id=client_id)
@@ -111,18 +111,21 @@ def add_description(request, facture_id):
         if form.is_valid():
             description = form.save(commit=False)
             description.facture = facture
-            description.save()
+            description.save()  # ✅ Sauvegarde effective
             return redirect('add_description', facture_id=facture.id)
+        else:
+            print(form.errors)  # 🔍 Pour voir les erreurs dans la console
     else:
         form = DescriptionForm()
 
-    #descriptions = facture.description_set.all()
-    descriptions = Description.objects.filter(facture=facture_id)
+    descriptions = Description.objects.filter(facture=facture)
+    total_general = descriptions.aggregate(sum_total=Sum('total'))['sum_total'] or 0
     return render(request, 'facture/description_facture.html', {
         'form': form,
         'facture': facture,
         'descriptions': descriptions,
-        'type_doc': 'Facture'
+        'type_doc': 'Facture',
+        'total_general': total_general,
     })
 
 
