@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm
+from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm, FacUpdateForm
 from .models import Client, Facture, Nh, Description
 
 
@@ -21,7 +21,7 @@ def detailClient(request, client_id):
 @login_required
 def recherche(request):
     query = request.GET.get("rech")  # on récupère la valeur du champ "rech"
-    clients = Client.objects.all()  # affiche tout
+    clients = Client.objects.all().order_by('-id')[:10] # affiche tout
     if query:
         clients = Client.objects.filter(nom__icontains=query)  # recherche insensible à la casse
     return render(request, 'client/liste_client.html', {'clients': clients, 'query':query})
@@ -77,10 +77,16 @@ def supprimerClient(request, client_id):
 
 # ========================FACTURE=================================================
 
-# Liste et Enregistrement de Facture Client
+# Liste, Recherche et Enregistrement de Facture Client
+@login_required
 def listFac(request, client_id):
     client = get_object_or_404(Client, id=client_id)
-    factures = Facture.objects.filter(client=client).order_by('-date')
+    query = request.GET.get("rech")  # on récupère la valeur du champ "rech"
+    if query:
+        factures = Facture.objects.filter(date__icontains=query)  # recherche insensible à la casse
+    else:
+        factures = Facture.objects.filter(client=client).order_by('-date')[:10]
+
     # Vue principale pour créer une facture (page avec JS dynamique).
     if request.method == 'POST':
         form = FactureForm(request.POST)
@@ -101,6 +107,42 @@ def listFac(request, client_id):
         'factures': factures,
         'client': client,
     })
+
+# Modification de la Facture Client
+@login_required
+def updateFac(request,facture_id):
+    facture = get_object_or_404(Facture, id=facture_id)
+
+    if request.method == 'POST':
+        form = FacUpdateForm(request.POST, instance=facture)
+        if form.is_valid():
+            facture = form.save(commit=False)
+            facture.user = request.user  # Facultatif : met à jour l'utilisateur qui modifie
+            facture.save()
+            facture.update_totals()  # 🔁 Recalcule les totaux après modif
+            #messages.success(request, "✅ La facture a été mise à jour avec succès.")
+            return redirect('add_description', facture_id=facture.id)  # Redirige vers le détail (à adapter)
+        #else:
+            #messages.error(request, "⚠️ Une erreur est survenue. Vérifie les champs.")
+    else:
+        form = FacUpdateForm(instance=facture)
+
+    return render(request, 'facture/modification_facture.html', {
+        'form': form,
+        'facture': facture
+    })
+
+# Suppression de la Facture
+@login_required
+def deleteFac(request, facture_id):
+    facture = get_object_or_404(Facture, id=facture_id)  # Récupération de la facture
+    client_id = facture.client.id  # On récupère l'ID avant de supprimer la facture
+
+    if request.method == 'POST':
+        facture.delete()  # Suppression
+        return redirect('list_Fac', client_id=client_id)  # ✅ redirection correcte
+    return render(request, 'facture/supprimer_facture.html', {'facture': facture})
+
 
 # ================== DESCRIPTION POUR FACTURE ==================
 @login_required

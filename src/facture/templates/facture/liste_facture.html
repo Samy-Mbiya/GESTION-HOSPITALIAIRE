@@ -16,7 +16,7 @@
                              <div class="dataTables_length" id="dataTable_length">
                                  <form method="GET" action="">
                                      <div id="dataTable_filter" class="dataTables_filter">
-                                         <label>Search:<input type="text" value="{{ query|default:'' }}" name="rech" class="form-control form-control-sm" placeholder="" aria-controls="dataTable"></label>
+                                         <label>Search:<input type="date" value="{{ query|default:'' }}" name="rech" class="form-control form-control-sm" placeholder="" aria-controls="dataTable"></label>
                                          <button type="submit" class="btn btn-secondary">Rechercher</button>
                                      </div>
                                  </form>
@@ -62,12 +62,12 @@
                                       <a href="{% url 'add_description' facture.id %}" class="btn btn-warning btn-icon-split"><span class="text">Detail</span></a>
                                     </td>
                                     <td>
-                                      <a href="{% url 'editclient' client.id %}" class="btn btn-info btn-icon-split"><span class="text">Modifier</span></a>
+                                      <a href="{% url 'edit_Fac' facture.id %}" class="btn btn-info  btn-sm remove-row">✏️<span class="text">Modifier</span></a>
                                     </td>
                                     {% if user.is_authenticated and user.is_superuser %}
                                         <td>
-                                            <a href="{% url 'suppclient' client.id %}" class="btn btn-danger btn-icon-split"><span class="text">Supprimer</span></a>
-                                         </td>
+                                            <a href="{% url 'supp_fac' facture.id %}" class="btn btn-danger btn-sm remove-row">❌suppression</a>
+                                        </td>
                                     {% endif %}
 
                                 </tr>

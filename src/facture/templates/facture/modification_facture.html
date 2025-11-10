@@ -1,10 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load form_tags %}
+{% block title %}
+  <title>Fac_Description</title>
+{% endblock %}
+{% block content %}
+     <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">{{ facture.client }} | <a href="{% url 'list_Fac' facture.client.id %}" >Liste Facture</a></h6>
+        </div>
+            <div class="card-body">
+                     <div class="row">
+                           <div class="container mt-4">
+                                    <fieldset class="border p-3">
+                                        <legend>Descprition | Facture N°000{{ facture.id }}</legend>
+                                         <form method="post">
+                                            {% csrf_token %}
+                                            <div class="d-flex align-items-end mb-3 " style="gap: 15px;">
+                                                <div class="flex-fill">
+                                                    <label class="form-label">Acompte :</label>
+                                                    {{ form.acompte }}
+                                                </div>
 
-</body>
-</html>
+                                                <div class="flex-fill">
+                                                    <label class="form-label">Remise :</label>
+                                                    {{ form.remise }}
+                                                </div>
+
+                                                <div>
+                                                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                                                </div>
+                                            </div>
+                                         </form>
+                                        <div id="total-display" class="mt-4 alert alert-info" >
+                                            <strong>Total a Payé :</strong> <span>{{ facture.total_payer }}</span> $
+                                            {% if facture.acompte > 0  %}
+                                                |
+                                                <strong>Acompte :</strong> <span >{{ facture.acompte }}</span> $ |
+                                                <strong>Reste :</strong> <span>{{ facture.reste }}</span> $ |
+                                                <strong>Remise :</strong> <span >{{ facture.remise }}</span> $
+                                            {% endif %}
+                                        </div>
+                                    </fieldset>
+                            </div>
+
+                     </div>
+                <div class="table-responsive">
+
+                </div>
+            </div>
+    </div>
+{% endblock %}

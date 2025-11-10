@@ -11,11 +11,17 @@ class ClientRegisterForm(forms.ModelForm):
 
 #FACTURE
 #-------
+# Creation
 class FactureForm(forms.ModelForm):
     class Meta:
         model = Facture
         fields = []
 
+# Modification
+class FacUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Facture
+        fields = ['acompte', 'remise']
 
 class NhForm(forms.ModelForm):
     class Meta:
