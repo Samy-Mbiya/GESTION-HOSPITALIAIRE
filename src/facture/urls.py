@@ -1,7 +1,8 @@
 from django.urls import path
 
 from .views import registerClient, editteClient, supprimerClient, recherche, \
-    listFac, listHon, create_nh, add_description, add_description_nh, updateFac, deleteFac
+    listFac, listHon, create_nh, add_description, add_description_nh, updateFac, deleteFac, update_Description, \
+    deleteDesc
 
 urlpatterns=[
     #Client
@@ -20,6 +21,8 @@ urlpatterns=[
 
     #Description
     path('description_fac/<int:facture_id>',add_description, name='add_description'),#Description Facture
+    path('update_description/<int:description_id>',update_Description, name='update_description'),#Modification Description
+    path('delete_description/<int:description_id>',deleteDesc, name='delete_description'),#Suppression de la description
     path('nh/<int:nh_id>/description/', add_description_nh, name='add_description_nh'),#Description Honoraire
 
     ]

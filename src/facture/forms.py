@@ -33,8 +33,19 @@ class NhForm(forms.ModelForm):
             'remise': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
-
+#Description Enregistre
 class DescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Description
+        fields = ['detail', 'qt', 'prix']
+        widgets = {
+            'detail': forms.TextInput(attrs={'class': 'form-control'}),
+            'qt': forms.NumberInput(attrs={'class': 'form-control'}),
+            'prix': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+
+#Description Update
+class DescriptionUpdatForm(forms.ModelForm):
     class Meta:
         model = Description
         fields = ['detail', 'qt', 'prix']

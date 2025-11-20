@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm, FacUpdateForm
+from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm, FacUpdateForm, DescriptionUpdatForm
 from .models import Client, Facture, Nh, Description
 
 
@@ -145,6 +145,8 @@ def deleteFac(request, facture_id):
 
 
 # ================== DESCRIPTION POUR FACTURE ==================
+#Enregistrement Description
+#---------------------------
 @login_required
 def add_description(request, facture_id):
     facture = get_object_or_404(Facture, pk=facture_id)
@@ -170,6 +172,39 @@ def add_description(request, facture_id):
         'total_general': total_general,
     })
 
+#Modification  Description
+#---------------------------
+@login_required
+def update_Description(request, description_id):
+    description = get_object_or_404(Description, id=description_id)
+
+    if request.method == 'POST':
+        form = DescriptionUpdatForm(request.POST, instance=description) #Remplissage du formileur
+
+        if form.is_valid():
+            description = form.save(commit=False)
+            description.save()
+            return redirect('add_description', facture_id=description.facture.id)
+        else:
+            print(form.errors)
+
+    else:
+        form = DescriptionUpdatForm(instance=description)
+
+    return render(request, 'facture/modification_description.html', {
+        'form': form,
+        'description': description,
+    })
+
+# Suppression de la Description
+@login_required
+def deleteDesc(request, description_id):
+    description = get_object_or_404(Description, id=description_id)  # Récupération de la facture
+    facture_id=description.facture.id
+    if request.method == 'POST':
+        description.delete()  # Suppression
+        return redirect('add_description', facture_id=facture_id)  # ✅ redirection correcte
+    return render(request, 'facture/supprimer_description.html', {'description': description, 'facture_id':facture_id})
 
 
 # HONORAIRE

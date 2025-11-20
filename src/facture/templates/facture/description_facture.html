@@ -4,9 +4,8 @@
   <title>Fac_Description</title>
 {% endblock %}
 {% block content %}
-     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 alert alert-info">
             <h6 class="m-0 font-weight-bold text-primary">{{ facture.client }} | <a href="{% url 'list_Fac' facture.client.id %}" >Liste Facture</a></h6>
         </div>
             <div class="card-body">
@@ -32,7 +31,7 @@
                                                 </div>
 
                                                 <div>
-                                                    <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                                                    <button type="submit" class="btn btn-info">💾 Enregistrer</button>
                                                 </div>
                                             </div>
                                          </form>
@@ -54,8 +53,12 @@
                                                     <td>{{ description.qt }}</td>
                                                     <td>{{ description.prix }}</td>
                                                     <td>{{ description.total }}</td>
-                                                    <td><button type="button" class="btn btn-info  btn-sm remove-row">✏️</button></td>
-                                                    <td><button type="button" class="btn btn-danger btn-sm remove-row">❌</button></td>
+                                                    <td>
+                                                        <a href="{% url 'update_description' description.id %}" class="btn btn-info  btn-sm remove-row">✏️<span class="text">Modifier</span></a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'delete_description' description.id %}" class="btn btn-info  btn-sm remove-row">❌<span class="text">Suppression</span></a>
+                                                    </td>
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>

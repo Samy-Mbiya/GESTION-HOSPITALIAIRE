@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+{% block title %}
+  <title>Fac_Description</title>
+{% endblock %}
+{% block content %}
+     <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+        </div>
+            <div class="card-body">
+                     <div class="row">
+                           <div class="container mt-4">
+                                    <fieldset class="border p-3">
+                                        <legend>Modification de la descprition {{ description.id }}</legend>
+                                         <form method="post">
+                                            {% csrf_token %}
+                                            <div class="mb-3">
+                                                <label class="form-label">Détail :</label>
+                                                {{ form.detail }}
+                                            </div>
+                                            <div class="d-flex align-items-end mb-3 " style="gap: 15px;">
+                                                <div class="flex-fill">
+                                                    <label class="form-label">Qté :</label>
+                                                    {{ form.qt }}
+                                                </div>
+
+                                                <div class="flex-fill">
+                                                   <label class="form-label">Prix :</label>
+                                                    {{ form.prix }}
+                                                </div>
+
+                                                <div>
+                                                    <button type="submit" class="btn btn-primary">💾 Modifier</button>
+                                                </div>
+                                            </div>
+                                         </form>
+                                    </fieldset>
+                            </div>
+                     </div>
+            </div>
+    </div>
+{% endblock %}

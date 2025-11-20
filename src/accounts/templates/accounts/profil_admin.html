@@ -7,7 +7,7 @@
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
+        <div class="card-header py-3 alert-info">
             <h6 class="m-0 font-weight-bold text-primary">Role: {{request.user.utilisateur.role}}</h6>
         </div>
             <div class="card-body">
@@ -22,7 +22,7 @@
                              </div>
                          </div>
                          <div class="col-sm-12 col-md-4">
-                             <div  class="dataTables_filter"><label>Nouveau:<a href="{% url 'register' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm form-control form-control-sm">Nouveau-Utilisateur</a></label>
+                             <div  class="dataTables_filter"><label>Nouveau:<a href="{% url 'register' %}" class="d-none d-sm-inline-block btn btn-sm btn-info shadow-sm form-control form-control-sm">Nouveau-Utilisateur</a></label>
                              </div>
                          </div>
                      </div>
