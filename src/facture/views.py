@@ -1,11 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.contrib.auth.models import User
-from django.db.models import Q
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm, FacUpdateForm, DescriptionUpdatForm
+from .forms import ClientRegisterForm, FactureForm, NhForm, DescriptionForm, FacUpdateForm, DescriptionUpdatForm, \
+    NhUpdateForm
 from .models import Client, Facture, Nh, Description
 
 
@@ -90,13 +88,21 @@ def listFac(request, client_id):
     # Vue principale pour créer une facture (page avec JS dynamique).
     if request.method == 'POST':
         form = FactureForm(request.POST)
-        # formset = DescriptionForm(request.POST)
+        formNh = NhForm(request.POST)
         if form.is_valid():
+            #Client
             facture = form.save(commit=False)
             facture.client = client  # 🔒 lie automatiquement au client
             facture.user = request.user
             facture.save()
             facture_id = facture.id  # ✅ récupère l'ID
+
+            #Note d'Honoraire
+            nh = formNh.save(commit=False)
+            nh.client = client  # 🔒 lie automatiquement au client
+            nh.user = request.user
+            nh.save()
+
             return redirect('add_description', facture_id=facture_id)
     else:
         # ✅ on passe l'ID du client en valeur initiale du champ caché
@@ -161,9 +167,10 @@ def add_description(request, facture_id):
             print(form.errors)  # 🔍 Pour voir les erreurs dans la console
     else:
         form = DescriptionForm()
-
+    #Facture Mise à jour de
     descriptions = Description.objects.filter(facture=facture)
     total_general = descriptions.aggregate(sum_total=Sum('total'))['sum_total'] or 0
+
     return render(request, 'facture/description_facture.html', {
         'form': form,
         'facture': facture,
@@ -207,54 +214,67 @@ def deleteDesc(request, description_id):
     return render(request, 'facture/supprimer_description.html', {'description': description, 'facture_id':facture_id})
 
 
-# HONORAIRE
-#-----------
+# ========================NOTE D'HONORAIRE=================================================
 #Liste Honoraire par client
+@login_required
 def listHon(request, client_id):
     client = get_object_or_404(Client, id=client_id)
-    nhs = Nh.objects.filter(client=client)
-    return render(request, "honoraire/liste_honoraire.html", {
-        "client": client,
-        "nhs": nhs,
+    query = request.GET.get("rech")  # on récupère la valeur du champ "rech"
+    if query:
+        honoraires = Nh.objects.filter(date__icontains=query)  # recherche insensible à la casse
+    else:
+        honoraires = Nh.objects.filter(client=client).order_by('-date')[:10]
+
+    return render(request, 'honoraire/liste_honoraire.html', {
+        'honoraires': honoraires,
+        'client': client,
     })
 
-# Enregistrement Honoraire
+# Modification de la NH
 @login_required
-def create_nh(request):
+def updateNh(request,honoraire_id):
+    honoraire = get_object_or_404(Nh, id=honoraire_id)
+
     if request.method == 'POST':
-        form = NhForm(request.POST)
+        form = NhUpdateForm(request.POST, instance=honoraire)
         if form.is_valid():
-            nh = form.save(commit=False)
-            nh.user = request.user
-            nh.save()
-            return redirect('add_description_nh', nh_id=nh.id)
+            honoraire = form.save(commit=False)
+            honoraire.user = request.user  # Facultatif : met à jour l'utilisateur qui modifie
+            honoraire.save()
+            honoraire.update_totals()  # 🔁 Recalcule les totaux après modif
+            #messages.success(request, "✅ La facture a été mise à jour avec succès.")
+            return redirect('add_description_nh', honoraire_id=honoraire.id)  # Redirige vers le détail (à adapter)
+        #else:
+            #messages.error(request, "⚠️ Une erreur est survenue. Vérifie les champs.")
     else:
-        form = NhForm()
+        form = NhUpdateForm(instance=honoraire)
 
-    last_nh = Nh.objects.last()
-    next_id = (last_nh.id + 1) if last_nh else 1
-    return render(request, 'honoraire/register_honoraire.html', {'form': form, 'next_id': next_id})
-
+    return render(request, 'honoraire/modification_honoraire.html', {
+        'form': form,
+        'honoraire': honoraire
+    })
 
 
 # ================== DESCRIPTION POUR HONORAIRE ==================
 @login_required
-def add_description_nh(request, nh_id):
-    nh = get_object_or_404(Nh, pk=nh_id)
+def add_description_nh(request, honoraire_id):
+    nh = get_object_or_404(Nh, pk=honoraire_id)
     if request.method == 'POST':
         form = DescriptionForm(request.POST)
         if form.is_valid():
             description = form.save(commit=False)
             description.nh = nh
             description.save()
-            return redirect('add_description_nh', nh_id=nh.id)
+            return redirect('add_description_nh', honoraire_id=honoraire_id)
     else:
         form = DescriptionForm()
 
-    descriptions = nh.description_set.all()
-    return render(request, 'app/description_form.html', {
+        # Facture Mise à jour de
+    descriptions = Description.objects.filter(nh=nh)
+    total_general = descriptions.aggregate(sum_total=Sum('total'))['sum_total'] or 0
+    return render(request, 'honoraire/description_honoraire.html', {
         'form': form,
-        'document': nh,
+        'nh': nh,
         'descriptions': descriptions,
         'type_doc': 'NH'
     })
